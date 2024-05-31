@@ -121,6 +121,35 @@ pub(crate) fn table() -> &'static Mutex<Vec<Charset>> {
     TABLE.get_or_init(Mutex::default)
 }
 
-fn load_charset_map(charset: &mut Vec<Charset>, entries: Vec<MapEntry>, control_flag: i32) {
+fn load_charset_map(charset: &mut Charset, entries: &mut Vec<MapEntry>, control_flag: i32) {
 
+    let mut vec;
+    let mut table;
+    let max_code = charset.max_code();
+    let ascii_compatible_p = charset.ascii_compatible_p;
+    let mut min_char;
+    let mut max_char;
+    let mut nonascii_min_char;
+    let mut i;
+
+    if entries.len() <= 0 {
+	return;
+    }
+
+    if control_flag {
+	if !inhibit_load_charset_map {
+	    if control_flag == 1 {
+		match charset.charset_method {
+		    Method::Map => {
+			let n = charset.code_point_to_index(max_code) + 1;
+			vec = crate::alloc::make_vector(n, (-1).into());
+			charset.set_charset_attr(charset_decoder, vec);
+		    }
+		    _ => {
+
+		    }
+		}
+	    }
+	}
+    }
 }
